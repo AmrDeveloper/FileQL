@@ -3,6 +3,10 @@ name = "fileql"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+gitql-cli = { path = "D:/Software/GQL/crates/gitql-cli", version = "0.13.0" }
+gitql-ast = { path = "D:/Software/GQL/crates/gitql-ast", version = "0.11.0" }
+gitql-parser = { path = "D:/Software/GQL/crates/gitql-parser", version = "0.12.0" }
+gitql-engine = { path = "D:/Software/GQL/crates/gitql-engine", version = "0.13.0" }
+lazy_static = "1.4.0"
+atty = "0.2.14"
