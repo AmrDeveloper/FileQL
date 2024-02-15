@@ -12,11 +12,12 @@ use gitql_engine::engine_evaluator::evaluate_expression;
 
 pub struct FileDataProvider {
     pub paths: Vec<String>,
+    pub excludes: Vec<String>,
 }
 
 impl FileDataProvider {
-    pub fn new(paths: Vec<String>) -> Self {
-        Self { paths }
+    pub fn new(paths: Vec<String>, excludes: Vec<String>) -> Self {
+        Self { paths, excludes }
     }
 }
 
@@ -31,7 +32,7 @@ impl DataProvider for FileDataProvider {
     ) -> GitQLObject {
         let mut files: Vec<String> = vec![];
         for path in self.paths.iter() {
-            let files_tree = traverse_file_path(path);
+            let files_tree = traverse_file_tree(path, &self.excludes);
             for f in files_tree.iter() {
                 if files.contains(f) {
                     continue;
@@ -109,9 +110,13 @@ impl DataProvider for FileDataProvider {
     }
 }
 
-fn traverse_file_path(dir_path: &str) -> Vec<String> {
+fn traverse_file_tree(dir_path: &str, excludes: &[String]) -> Vec<String> {
     let mut file_paths = Vec::new();
-    let mut stack: Vec<String> = vec![dir_path.to_owned()];
+    let mut stack: Vec<String> = vec![];
+
+    if !excludes.contains(&dir_path.to_string()) {
+        stack.push(dir_path.to_owned());
+    }
 
     while let Some(path) = stack.pop() {
         if let Ok(entries) = std::fs::read_dir(&path) {
@@ -119,10 +124,16 @@ fn traverse_file_path(dir_path: &str) -> Vec<String> {
                 let file_type = entry.file_type().unwrap();
                 let subpath = entry.path();
 
-                if file_type.is_dir() {
-                    stack.push(subpath.to_str().unwrap_or("").to_string());
-                } else if let Some(file_path) = subpath.to_str() {
-                    file_paths.push(file_path.to_string());
+                if let Some(path) = entry.file_name().to_str() {
+                    if excludes.contains(&path.to_string()) {
+                        continue;
+                    }
+
+                    if file_type.is_dir() {
+                        stack.push(subpath.to_str().unwrap_or("").to_string());
+                    } else if let Some(file_path) = subpath.to_str() {
+                        file_paths.push(file_path.to_string());
+                    }
                 }
             }
         }

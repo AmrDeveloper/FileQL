@@ -148,7 +148,10 @@ fn execute_fileql_query(
     let front_duration = front_start.elapsed();
 
     let engine_start = std::time::Instant::now();
-    let provider: Box<dyn DataProvider> = Box::new(FileDataProvider::new(files.to_vec()));
+    let files = files.to_vec();
+    let excludes = arguments.excludes.to_vec();
+    let file_provider = FileDataProvider::new(files, excludes);
+    let provider: Box<dyn DataProvider> = Box::new(file_provider);
     let evaluation_result = engine::evaluate(env, &provider, query_node);
 
     // Report Runtime exceptions if they exists

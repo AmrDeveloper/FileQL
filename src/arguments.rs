@@ -4,6 +4,7 @@ use gitql_cli::arguments::OutputFormat;
 #[derive(Debug, PartialEq)]
 pub struct Arguments {
     pub files: Vec<String>,
+    pub excludes: Vec<String>,
     pub analysis: bool,
     pub pagination: bool,
     pub page_size: usize,
@@ -15,6 +16,7 @@ impl Arguments {
     fn new() -> Arguments {
         Arguments {
             files: vec![],
+            excludes: vec![],
             analysis: false,
             pagination: false,
             page_size: 10,
@@ -71,9 +73,31 @@ pub fn parse_arguments(args: &[String]) -> Command {
                         break;
                     }
 
-                    let repo = &args[arg_index];
-                    if !repo.starts_with('-') {
-                        arguments.files.push(repo.to_string());
+                    let files = &args[arg_index];
+                    if !files.starts_with('-') {
+                        arguments.files.push(files.to_string());
+                        arg_index += 1;
+                        continue;
+                    }
+
+                    break;
+                }
+            }
+            "--excludes" | "-e" => {
+                arg_index += 1;
+                if arg_index >= args_len {
+                    let message = format!("Argument {} must be followed by one or more path", arg);
+                    return Command::Error(message);
+                }
+
+                loop {
+                    if arg_index >= args_len {
+                        break;
+                    }
+
+                    let files = &args[arg_index];
+                    if !files.starts_with('-') {
+                        arguments.excludes.push(files.to_string());
                         arg_index += 1;
                         continue;
                     }
@@ -170,7 +194,8 @@ pub fn print_help_list() {
     println!("Usage: FileQL [OPTIONS]");
     println!();
     println!("Options:");
-    println!("-f,  --files <files>        Path for local files to run query on");
+    println!("-f,  --files <paths>        Path for local files to run query on");
+    println!("-e,  --excludes <paths>     Path for local files to exclude from query scope");
     println!("-q,  --query <GQL Query>    FileQL query to run on selected repositories");
     println!("-p,  --pagination           Enable print result with pagination");
     println!("-ps, --pagesize             Set pagination page size [default: 10]");
