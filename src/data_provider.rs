@@ -97,6 +97,8 @@ impl DataProvider for FileDataProvider {
                     values.push(Value::Integer(file_size));
                     continue;
                 }
+
+                values.push(Value::Null);
             }
 
             rows.push(Row { values });
