@@ -7,6 +7,7 @@ use gitql_ast::object::GitQLObject;
 use gitql_ast::object::Group;
 use gitql_ast::object::Row;
 use gitql_ast::value::Value;
+use gitql_engine::data_provider::select_values;
 use gitql_engine::data_provider::DataProvider;
 use gitql_engine::engine_evaluator::evaluate_expression;
 
@@ -25,11 +26,23 @@ impl DataProvider for FileDataProvider {
     fn provide(
         &self,
         env: &mut Environment,
-        _table: &str,
+        table: &str,
         fields_names: &[String],
         titles: &[String],
         fields_values: &[Box<dyn Expression>],
     ) -> GitQLObject {
+        let mut groups: Vec<Group> = vec![];
+        if table.is_empty() {
+            if let Ok(group) = select_values(env, titles, fields_values) {
+                groups.push(group);
+            }
+
+            return GitQLObject {
+                titles: titles.to_vec(),
+                groups,
+            };
+        }
+
         let mut files: Vec<String> = vec![];
         for path in self.paths.iter() {
             let files_tree = traverse_file_tree(path, &self.excludes);
@@ -41,7 +54,6 @@ impl DataProvider for FileDataProvider {
             }
         }
 
-        let mut groups: Vec<Group> = vec![];
         let mut rows: Vec<Row> = vec![];
 
         let names_len = fields_names.len() as i64;
