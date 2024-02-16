@@ -144,7 +144,7 @@ jobs:
         run: |
           chmod +x scripts/cargo-out-dir
           outdir="$(scripts/cargo-out-dir "${{ env.TARGET_DIR }}")"
-          bin="gql-${{ matrix.name }}"
+          bin="fileql-${{ matrix.name }}"
 
           if [ "${{ matrix.os }}" = "windows-2022" ]; then
             cp "target/${{ matrix.target }}/release/fileql.exe" "$bin.exe"
