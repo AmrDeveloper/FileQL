@@ -329,7 +329,9 @@ dependencies = [
 
 [[package]]
 name = "gitql-ast"
-version = "0.11.0"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d6a08fbecf95658ac0e95db3fa0404a7dec1d65b1717b9505196e7497817821b"
 dependencies = [
  "chrono",
  "csv",
@@ -339,7 +341,9 @@ dependencies = [
 
 [[package]]
 name = "gitql-cli"
-version = "0.13.0"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "489626f913852b58ac7a1b310174b9f88eb974d774205de487dbf7078bda78e1"
 dependencies = [
  "comfy-table",
  "gitql-ast",
@@ -349,7 +353,9 @@ dependencies = [
 
 [[package]]
 name = "gitql-engine"
-version = "0.13.0"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "42084167ca24377d51078844b5449ab44cdb584bbcc4eb7f9fb61fcb4c689e1b"
 dependencies = [
  "gitql-ast",
  "gix",
@@ -358,7 +364,9 @@ dependencies = [
 
 [[package]]
 name = "gitql-parser"
-version = "0.12.0"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5cb9284b3501a66901447eb0c809a1f9be12d6ba1db5e975e335c4d1a84ab66b"
 dependencies = [
  "gitql-ast",
 ]
