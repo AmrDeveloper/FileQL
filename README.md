@@ -44,12 +44,14 @@ SELECT DISTINCT parent AS folders FROM files
 
 ### Files table structure
 
-| Name      | Type    | Description           |
-| --------- | ------- | --------------------- |
-| path      | Text    | File path             |
-| parent    | Text    | File parent path      |
-| extension | Text    | Extension of the file |
-| size      | Integer | Size of the file      |
+| Name      | Type    | Description              |
+| --------- | ------- | ------------------------ |
+| path      | Text    | File path                |
+| parent    | Text    | File parent path         |
+| extension | Text    | Extension of the file    |
+| is_dir    | Boolean | True if it's a directory |
+| is_file   | Boolean | True if it's a file      |
+| size      | Integer | Size of the file         |
 
 ---
 

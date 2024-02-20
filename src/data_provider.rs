@@ -62,6 +62,7 @@ impl DataProvider for FileDataProvider {
 
         for file in files {
             let mut values: Vec<Value> = vec![];
+            let path = Path::new(&file);
 
             for index in 0..names_len {
                 let field_name = &fields_names[index as usize];
@@ -76,14 +77,12 @@ impl DataProvider for FileDataProvider {
                 }
 
                 if field_name == "path" {
-                    let path = Path::new(&file);
                     let file_path_string = path.to_str().unwrap_or("");
                     values.push(Value::Text(file_path_string.to_string()));
                     continue;
                 }
 
                 if field_name == "parent" {
-                    let path = Path::new(&file);
                     let parent_path = if let Some(parent) = path.parent() {
                         parent.to_str().unwrap_or("")
                     } else {
@@ -94,9 +93,18 @@ impl DataProvider for FileDataProvider {
                 }
 
                 if field_name == "extension" {
-                    let path = Path::new(&file);
                     let extension = path.extension().and_then(|ext| ext.to_str()).unwrap_or("");
                     values.push(Value::Text(extension.to_string()));
+                    continue;
+                }
+
+                if field_name == "is_dir" {
+                    values.push(Value::Boolean(path.is_dir()));
+                    continue;
+                }
+
+                if field_name == "is_file" {
+                    values.push(Value::Boolean(path.is_file()));
                     continue;
                 }
 
