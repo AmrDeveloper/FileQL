@@ -1,7 +1,7 @@
 [package]
 name = "fileql"
 authors = ["AmrDeveloper"]
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 description = "A tool to run SQL-like query on local files using GitQL SDK"
 license = "MIT"
@@ -13,9 +13,9 @@ categories = ["command-line-utilities"]
 exclude = [".github/**", "docs/**", "media/**", "scripts/**"]
 
 [dependencies]
-gitql-cli = "0.14.0"
-gitql-ast = "0.12.0"
-gitql-parser = "0.13.0"
-gitql-engine = "0.14.0"
+gitql-cli = "0.15.0"
+gitql-ast = "0.13.0"
+gitql-parser = "0.14.0"
+gitql-engine = "0.15.0"
 lazy_static = "1.4.0"
 atty = "0.2.14"
