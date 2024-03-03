@@ -54,14 +54,14 @@ impl DataProvider for FileDataProvider {
             }
         }
 
-        let mut rows: Vec<Row> = vec![];
+        let mut rows: Vec<Row> = Vec::with_capacity(files.len());
 
         let names_len = fields_names.len() as i64;
         let values_len = fields_values.len() as i64;
         let padding = names_len - values_len;
 
         for file in files {
-            let mut values: Vec<Value> = vec![];
+            let mut values: Vec<Value> = Vec::with_capacity(names_len as usize);
             let path = Path::new(&file);
 
             for index in 0..names_len {
