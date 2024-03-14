@@ -63,6 +63,13 @@ SELECT DISTINCT parent AS folders FROM files
 cargo install fileql
 ```
 
+- Install from Winget
+
+```
+winget install fileql
+```
+
+
 - Build from source code
 
 ```
