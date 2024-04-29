@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 0.3.0 *(2024-04-29)*
+-----------------------------
+
+* Pre allocate rows and values with fixed size.
+* Upgrade to GitQL SDk 0.18.0
+
 Version 0.2.0 *(2024-03-01)*
 -----------------------------
 
