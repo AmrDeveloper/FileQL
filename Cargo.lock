@@ -329,9 +329,9 @@ dependencies = [
 
 [[package]]
 name = "gitql-ast"
-version = "0.16.0"
+version = "0.17.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e394dac423bb2644703be4be677ff28343daea7004de6dd8a22b0d90e7c2c59c"
+checksum = "6d4e15aaa774497fc524a3993fa0e0714c7ba4130785346425424b84c8cb229f"
 dependencies = [
  "chrono",
  "csv",
@@ -339,13 +339,14 @@ dependencies = [
  "rand",
  "regex",
  "serde_json",
+ "uuid",
 ]
 
 [[package]]
 name = "gitql-cli"
-version = "0.18.0"
+version = "0.19.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "981fd704f0ada55237f22ad49ec0d646156fe1a0bf7e0e8a4a7c8b0458bf36ef"
+checksum = "faf4c77c0d31d6f559c65937a89054c9272df88b19eab0425f161597c422521b"
 dependencies = [
  "comfy-table",
  "gitql-ast",
@@ -355,9 +356,9 @@ dependencies = [
 
 [[package]]
 name = "gitql-engine"
-version = "0.18.0"
+version = "0.19.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "382a44699af96d3b19889851ea81bf8c1b704574493d43a6f7e84a153771140b"
+checksum = "56f6baf403f25b11187c6d84503197029d72776136fe868430f1d6f00d9b4027"
 dependencies = [
  "gitql-ast",
  "gix",
@@ -366,9 +367,9 @@ dependencies = [
 
 [[package]]
 name = "gitql-parser"
-version = "0.17.0"
+version = "0.18.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d6d68ba311f114e37f4c6813c8fdd1918ee934aaf80e791d0057f3b263ee66aa"
+checksum = "94b57f611c04e2c4268945298febfdb5234c7f26637b9c834807050008132872"
 dependencies = [
  "gitql-ast",
 ]
@@ -1600,6 +1601,15 @@ dependencies = [
  "form_urlencoded",
  "idna",
  "percent-encoding",
+]
+
+[[package]]
+name = "uuid"
+version = "1.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a183cf7feeba97b4dd1c0d46788634f6221d87fa961b305bed08c851829efcc0"
+dependencies = [
+ "getrandom",
 ]
 
 [[package]]
