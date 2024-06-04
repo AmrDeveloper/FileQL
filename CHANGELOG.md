@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 0.4.0 *(2024-06-04)*
+-----------------------------
+
+* Upgrade to GitQL SDk 0.20.0
+* Remove `lazy_static` crate
+
 Version 0.3.0 *(2024-04-29)*
 -----------------------------
 
