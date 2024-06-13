@@ -10,8 +10,7 @@ use std::sync::OnceLock;
 pub fn fileql_std_functions() -> &'static HashMap<&'static str, Function> {
     static HASHMAP: OnceLock<HashMap<&'static str, Function>> = OnceLock::new();
     HASHMAP.get_or_init(|| {
-        let mut map: HashMap<&'static str, Function> =
-            HashMap::from(standard_functions().to_owned());
+        let mut map: HashMap<&'static str, Function> = standard_functions().to_owned();
         map.insert("files_count", files_count);
         map
     })
@@ -20,8 +19,7 @@ pub fn fileql_std_functions() -> &'static HashMap<&'static str, Function> {
 pub fn fileql_std_signatures() -> &'static HashMap<&'static str, Signature> {
     static HASHMAP: OnceLock<HashMap<&'static str, Signature>> = OnceLock::new();
     HASHMAP.get_or_init(|| {
-        let mut map: HashMap<&'static str, Signature> =
-            HashMap::from(standard_function_signatures().to_owned());
+        let mut map: HashMap<&'static str, Signature> = standard_function_signatures().to_owned();
         map.insert(
             "files_count",
             Signature {

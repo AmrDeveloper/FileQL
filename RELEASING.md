@@ -16,6 +16,8 @@
    $ git tag -am "X.Y.Z" X.Y.Z
    ```
 
+   git tag -am "0.5.0" 0.5.0
+
 5. Push!
 
    ```
