@@ -30,17 +30,17 @@ impl DataProvider for FileDataProvider {
         fields_names: &[String],
         titles: &[String],
         fields_values: &[Box<dyn Expression>],
-    ) -> GitQLObject {
+        hidden_selection_count: i64,
+    ) -> Result<GitQLObject, String> {
         let mut groups: Vec<Group> = vec![];
         if table.is_empty() {
-            if let Ok(group) = select_values(env, titles, fields_values) {
-                groups.push(group);
-            }
+            let group = select_values(env, titles, fields_values)?;
+            groups.push(group);
 
-            return GitQLObject {
+            return Ok(GitQLObject {
                 titles: titles.to_vec(),
                 groups,
-            };
+            });
         }
 
         let mut files: Vec<String> = vec![];
@@ -65,16 +65,16 @@ impl DataProvider for FileDataProvider {
             let path = Path::new(&file);
 
             for index in 0..names_len {
-                let field_name = &fields_names[index as usize];
-
-                if (index - padding) >= 0 {
+                if index >= hidden_selection_count && (index - padding) >= 0 {
                     let value = &fields_values[(index - padding) as usize];
                     if value.as_any().downcast_ref::<SymbolExpression>().is_none() {
-                        let evaluated = evaluate_expression(env, value, titles, &values);
-                        values.push(evaluated.unwrap_or(Value::Null));
+                        let evaluated = evaluate_expression(env, value, titles, &values)?;
+                        values.push(evaluated);
                         continue;
                     }
                 }
+
+                let field_name = &fields_names[index as usize];
 
                 if field_name == "path" {
                     let file_path_string = path.to_str().unwrap_or("");
@@ -125,10 +125,10 @@ impl DataProvider for FileDataProvider {
         }
 
         groups.push(Group { rows });
-        GitQLObject {
+        Ok(GitQLObject {
             titles: titles.to_vec(),
             groups,
-        }
+        })
     }
 }
 
