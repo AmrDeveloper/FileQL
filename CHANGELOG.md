@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 0.5.0 *(2024-06-13)*
+-----------------------------
+
+* Upgrade to GitQL SDk 0.23.0
+* Implement `files_count` function.
+
 Version 0.4.0 *(2024-06-04)*
 -----------------------------
 

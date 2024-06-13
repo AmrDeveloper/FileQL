@@ -38,6 +38,7 @@ SELECT "File Query Language" LIKE "%Query%"
 SELECT * FROM files
 SELECT COUNT(path) from files
 SELECT DISTINCT parent AS folders FROM files
+SELECT CHILDREN_COUNT(parent) FROM files
 ```
 
 ---
@@ -52,6 +53,14 @@ SELECT DISTINCT parent AS folders FROM files
 | is_dir    | Boolean | True if it's a directory |
 | is_file   | Boolean | True if it's a file      |
 | size      | Integer | Size of the file         |
+
+---
+
+### Files QL Functions
+
+| Name        | Parameters | Return  | Description                                                  |
+| ----------- | ---------- | ------- | ------------------------------------------------------------ |
+| FILES_COUNT | Text       | Integer | Number of children for directory or 0 if it's not valid path |
 
 ---
 
