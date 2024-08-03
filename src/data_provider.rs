@@ -1,15 +1,8 @@
 use std::path::Path;
 
-use gitql_ast::expression::Expression;
-use gitql_ast::expression::SymbolExpression;
-use gitql_core::environment::Environment;
-use gitql_core::object::GitQLObject;
-use gitql_core::object::Group;
 use gitql_core::object::Row;
 use gitql_core::value::Value;
-use gitql_engine::data_provider::select_values;
 use gitql_engine::data_provider::DataProvider;
-use gitql_engine::engine_evaluator::evaluate_expression;
 
 pub struct FileDataProvider {
     pub paths: Vec<String>,
@@ -23,26 +16,7 @@ impl FileDataProvider {
 }
 
 impl DataProvider for FileDataProvider {
-    fn provide(
-        &self,
-        env: &mut Environment,
-        table: &str,
-        fields_names: &[String],
-        titles: &[String],
-        fields_values: &[Box<dyn Expression>],
-        hidden_selection_count: i64,
-    ) -> Result<GitQLObject, String> {
-        let mut groups: Vec<Group> = vec![];
-        if table.is_empty() {
-            let group = select_values(env, titles, fields_values)?;
-            groups.push(group);
-
-            return Ok(GitQLObject {
-                titles: titles.to_vec(),
-                groups,
-            });
-        }
-
+    fn provide(&self, _table: &str, selected_columns: &[String]) -> Result<Vec<Row>, String> {
         let mut files: Vec<String> = vec![];
         for path in self.paths.iter() {
             let files_tree = traverse_file_tree(path, &self.excludes);
@@ -54,28 +28,15 @@ impl DataProvider for FileDataProvider {
             }
         }
 
+        let names_len = selected_columns.len() as i64;
         let mut rows: Vec<Row> = Vec::with_capacity(files.len());
-
-        let names_len = fields_names.len() as i64;
-        let values_len = fields_values.len() as i64;
-        let padding = names_len - values_len;
 
         for file in files {
             let mut values: Vec<Value> = Vec::with_capacity(names_len as usize);
             let path = Path::new(&file);
 
             for index in 0..names_len {
-                if index >= hidden_selection_count && (index - padding) >= 0 {
-                    let value = &fields_values[(index - padding) as usize];
-                    if value.as_any().downcast_ref::<SymbolExpression>().is_none() {
-                        let evaluated = evaluate_expression(env, value, titles, &values)?;
-                        values.push(evaluated);
-                        continue;
-                    }
-                }
-
-                let field_name = &fields_names[index as usize];
-
+                let field_name = &selected_columns[index as usize];
                 if field_name == "path" {
                     let file_path_string = path.to_str().unwrap_or("");
                     values.push(Value::Text(file_path_string.to_string()));
@@ -124,11 +85,7 @@ impl DataProvider for FileDataProvider {
             rows.push(Row { values });
         }
 
-        groups.push(Group { rows });
-        Ok(GitQLObject {
-            titles: titles.to_vec(),
-            groups,
-        })
+        Ok(rows)
     }
 }
 
