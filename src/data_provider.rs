@@ -109,7 +109,9 @@ fn traverse_file_tree(dir_path: &str, excludes: &[String]) -> Vec<String> {
                     }
 
                     if file_type.is_dir() {
-                        stack.push(subpath.to_str().unwrap_or("").to_string());
+                        let path = subpath.to_str().unwrap_or("").to_string();
+                        stack.push(path.to_string());
+                        file_paths.push(path.to_string());
                     } else if let Some(file_path) = subpath.to_str() {
                         file_paths.push(file_path.to_string());
                     }
