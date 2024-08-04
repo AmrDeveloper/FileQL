@@ -1,7 +1,12 @@
 Change Log
 ==========
 
-Version 0.6.0 *(2024-08-13)*
+Version 0.7.0 *(2024-08-4)*
+-----------------------------
+
+* Include directories in the file crawler
+
+Version 0.6.0 *(2024-08-3)*
 -----------------------------
 
 * Upgrade to GitQL SDk 0.25.0
