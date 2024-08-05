@@ -16,7 +16,12 @@ impl FileDataProvider {
 }
 
 impl DataProvider for FileDataProvider {
-    fn provide(&self, _table: &str, selected_columns: &[String]) -> Result<Vec<Row>, String> {
+    fn provide(&self, table: &str, selected_columns: &[String]) -> Result<Vec<Row>, String> {
+        // If table is empty, thats mean it's a set of expressions query
+        if table.is_empty() {
+            return Ok(vec![Row { values: vec![] }]);
+        }
+
         let mut files: Vec<String> = vec![];
         for path in self.paths.iter() {
             let files_tree = traverse_file_tree(path, &self.excludes);
