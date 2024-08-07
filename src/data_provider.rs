@@ -29,19 +29,9 @@ fn select_files(
     excludes: &[String],
     selected_columns: &[String],
 ) -> Result<Vec<Row>, String> {
-    let mut files: Vec<String> = vec![];
-    for path in paths {
-        let files_tree = traverse_file_tree(path, excludes);
-        for f in files_tree.iter() {
-            if files.contains(f) {
-                continue;
-            }
-            files.push(f.to_string());
-        }
-    }
-
+    let files = collect_paths_nested_files(paths, excludes);
     let mut rows: Vec<Row> = Vec::with_capacity(paths.len());
-    for file in paths {
+    for file in files.iter() {
         let mut values: Vec<Value> = Vec::with_capacity(selected_columns.len());
         let path = Path::new(&file);
 
@@ -93,11 +83,24 @@ fn select_files(
 
         rows.push(Row { values });
     }
-
     Ok(rows)
 }
 
-fn traverse_file_tree(dir_path: &str, excludes: &[String]) -> Vec<String> {
+fn collect_paths_nested_files(paths: &[String], excludes: &[String]) -> Vec<String> {
+    let mut files: Vec<String> = vec![];
+    for path in paths {
+        let files_tree = collect_path_nested_files(path, excludes);
+        for file in files_tree.iter() {
+            if files.contains(file) {
+                continue;
+            }
+            files.push(file.to_string());
+        }
+    }
+    files
+}
+
+fn collect_path_nested_files(dir_path: &str, excludes: &[String]) -> Vec<String> {
     let mut file_paths = Vec::new();
     let mut stack: Vec<String> = vec![];
 
