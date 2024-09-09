@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 0.8.0 *(2024-09-09)*
+-----------------------------
+
+* Fix the provider when number of tables is zero.
+* Update GitQL SDK to 0.27.0.
+
 Version 0.7.0 *(2024-08-4)*
 -----------------------------
 

@@ -153,7 +153,7 @@ dependencies = [
 
 [[package]]
 name = "fileql"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "atty",
  "gitql-ast",
