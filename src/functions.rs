@@ -1,7 +1,9 @@
+use gitql_ast::types::integer::IntType;
+use gitql_ast::types::text::TextType;
 use gitql_core::signature::Function;
 use gitql_core::signature::Signature;
-use gitql_core::types::DataType;
-use gitql_core::value::Value;
+use gitql_core::values::base::Value;
+use gitql_core::values::integer::IntValue;
 use gitql_std::function::standard_function_signatures;
 use gitql_std::function::standard_functions;
 use std::collections::HashMap;
@@ -16,26 +18,25 @@ pub fn fileql_std_functions() -> &'static HashMap<&'static str, Function> {
     })
 }
 
-pub fn fileql_std_signatures() -> &'static HashMap<&'static str, Signature> {
-    static HASHMAP: OnceLock<HashMap<&'static str, Signature>> = OnceLock::new();
-    HASHMAP.get_or_init(|| {
-        let mut map: HashMap<&'static str, Signature> = standard_function_signatures().to_owned();
-        map.insert(
-            "files_count",
-            Signature {
-                parameters: vec![DataType::Text],
-                return_type: DataType::Integer,
-            },
-        );
-        map
-    })
+pub fn fileql_std_signatures() -> HashMap<&'static str, Signature> {
+    let mut map: HashMap<&'static str, Signature> = standard_function_signatures().to_owned();
+    map.insert(
+        "files_count",
+        Signature {
+            parameters: vec![Box::new(TextType)],
+            return_type: Box::new(IntType),
+        },
+    );
+    map
 }
 
-fn files_count(values: &[Value]) -> Value {
-    let path = values[0].as_text();
+fn files_count(values: &[Box<dyn Value>]) -> Box<dyn Value> {
+    let path = values[0].as_text().unwrap();
     if let Ok(entries) = std::fs::read_dir(path) {
         let count = entries.flatten().count();
-        return Value::Integer(count as i64);
+        return Box::new(IntValue {
+            value: count as i64,
+        });
     }
-    Value::Integer(0)
+    Box::new(IntValue { value: 0 })
 }

@@ -1,7 +1,11 @@
 use std::path::Path;
 
 use gitql_core::object::Row;
-use gitql_core::value::Value;
+use gitql_core::values::base::Value;
+use gitql_core::values::boolean::BoolValue;
+use gitql_core::values::integer::IntValue;
+use gitql_core::values::null::NullValue;
+use gitql_core::values::text::TextValue;
 use gitql_engine::data_provider::DataProvider;
 
 pub struct FileDataProvider {
@@ -32,13 +36,14 @@ fn select_files(
     let files = collect_paths_nested_files(paths, excludes);
     let mut rows: Vec<Row> = Vec::with_capacity(paths.len());
     for file in files.iter() {
-        let mut values: Vec<Value> = Vec::with_capacity(selected_columns.len());
+        let mut values: Vec<Box<dyn Value>> = Vec::with_capacity(selected_columns.len());
         let path = Path::new(&file);
 
         for column_name in selected_columns {
             if column_name == "path" {
                 let file_path_string = path.to_str().unwrap_or("");
-                values.push(Value::Text(file_path_string.to_string()));
+                let value = file_path_string.to_string();
+                values.push(Box::new(TextValue { value }));
                 continue;
             }
 
@@ -48,23 +53,30 @@ fn select_files(
                 } else {
                     ""
                 };
-                values.push(Value::Text(parent_path.to_string()));
+                let value = parent_path.to_string();
+                values.push(Box::new(TextValue { value }));
                 continue;
             }
 
             if column_name == "extension" {
-                let extension = path.extension().and_then(|ext| ext.to_str()).unwrap_or("");
-                values.push(Value::Text(extension.to_string()));
+                let value = path
+                    .extension()
+                    .and_then(|ext| ext.to_str())
+                    .unwrap_or("")
+                    .to_string();
+                values.push(Box::new(TextValue { value }));
                 continue;
             }
 
             if column_name == "is_dir" {
-                values.push(Value::Boolean(path.is_dir()));
+                let value = path.is_dir();
+                values.push(Box::new(BoolValue { value }));
                 continue;
             }
 
             if column_name == "is_file" {
-                values.push(Value::Boolean(path.is_file()));
+                let value = path.is_file();
+                values.push(Box::new(BoolValue { value }));
                 continue;
             }
 
@@ -74,11 +86,11 @@ fn select_files(
                 } else {
                     0
                 };
-                values.push(Value::Integer(file_size));
+                values.push(Box::new(IntValue { value: file_size }));
                 continue;
             }
 
-            values.push(Value::Null);
+            values.push(Box::new(NullValue));
         }
 
         rows.push(Row { values });
