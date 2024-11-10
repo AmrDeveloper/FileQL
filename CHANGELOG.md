@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 0.9.0 *(2024-11-10)*
+-----------------------------
+
+* Replace `atty` with std is_terminal.
+* Migrate to GitQL SDK 0.30.0
+
 Version 0.8.0 *(2024-09-09)*
 -----------------------------
 
