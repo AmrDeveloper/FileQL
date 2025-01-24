@@ -19,7 +19,7 @@ use gitql_engine::data_provider::DataProvider;
 use gitql_engine::engine;
 use gitql_parser::diagnostic::Diagnostic;
 use gitql_parser::parser;
-use gitql_parser::tokenizer;
+use gitql_parser::tokenizer::Tokenizer;
 use gitql_std::aggregation::aggregation_function_signatures;
 use gitql_std::aggregation::aggregation_functions;
 use schema::tables_fields_names;
@@ -152,7 +152,7 @@ fn execute_fileql_query(
     reporter: &mut DiagnosticReporter,
 ) {
     let front_start = std::time::Instant::now();
-    let tokenizer_result = tokenizer::tokenize(query.clone());
+    let tokenizer_result = Tokenizer::tokenize(query.clone());
     if tokenizer_result.is_err() {
         let diagnostic = tokenizer_result.err().unwrap();
         reporter.report_diagnostic(&query, *diagnostic);
@@ -191,27 +191,35 @@ fn execute_fileql_query(
     }
 
     // Render the result only if they are selected groups not any other statement
-    let engine_result = evaluation_result.ok().unwrap();
-    if let SelectedGroups(mut groups) = engine_result {
-        let printer: Box<dyn OutputPrinter> = match arguments.output_format {
-            OutputFormat::Render => {
-                Box::new(TablePrinter::new(arguments.pagination, arguments.page_size))
-            }
-            OutputFormat::JSON => Box::new(JSONPrinter {}),
-            OutputFormat::CSV => Box::new(CSVPrinter {}),
-        };
-        printer.print(&mut groups);
-    }
-
+    // Render the result only if they are selected groups not any other statement
     let engine_duration = engine_start.elapsed();
 
-    if arguments.analysis {
-        println!("\n");
-        println!("Analysis:");
-        println!("Frontend : {:?}", front_duration);
-        println!("Engine   : {:?}", engine_duration);
-        println!("Total    : {:?}", (front_duration + engine_duration));
-        println!("\n");
+    let printer: Box<dyn OutputPrinter> = match arguments.output_format {
+        OutputFormat::Render => {
+            Box::new(TablePrinter::new(arguments.pagination, arguments.page_size))
+        }
+        OutputFormat::JSON => Box::new(JSONPrinter {}),
+        OutputFormat::CSV => Box::new(CSVPrinter {}),
+    };
+
+    // Render the result only if they are selected groups not any other statement
+    let evaluations_results = evaluation_result.ok().unwrap();
+    for evaluation_result in evaluations_results {
+        let mut rows_count = 0;
+        if let SelectedGroups(mut groups) = evaluation_result {
+            if !groups.is_empty() {
+                rows_count += groups.groups[0].len();
+                printer.print(&mut groups);
+            }
+        }
+
+        if arguments.analysis {
+            let total_time = front_duration + engine_duration;
+            println!(
+                "{} row in set (total: {:?}, front: {:?}, engine: {:?})",
+                rows_count, total_time, front_duration, engine_duration
+            );
+        }
     }
 }
 
