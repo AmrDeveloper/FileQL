@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 0.10.0 *(2025-02-19)*
+-----------------------------
+
+* Migrate to GitQL 0.36.0
+* Add support for using window functions.
+
 Version 0.9.0 *(2024-11-10)*
 -----------------------------
 
