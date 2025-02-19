@@ -14,16 +14,12 @@ use gitql_cli::printer::csv_printer::CSVPrinter;
 use gitql_cli::printer::json_printer::JSONPrinter;
 use gitql_cli::printer::table_printer::TablePrinter;
 use gitql_core::environment::Environment;
-use gitql_core::schema::Schema;
 use gitql_engine::data_provider::DataProvider;
 use gitql_engine::engine;
 use gitql_parser::diagnostic::Diagnostic;
 use gitql_parser::parser;
 use gitql_parser::tokenizer::Tokenizer;
-use gitql_std::aggregation::aggregation_function_signatures;
-use gitql_std::aggregation::aggregation_functions;
-use schema::tables_fields_names;
-use schema::tables_fields_types;
+use schema::create_fileql_environment;
 
 mod arguments;
 mod data_provider;
@@ -47,21 +43,8 @@ fn main() {
                 reporter.report_diagnostic("", Diagnostic::error(error.as_str()));
                 return;
             }
-            let schema = Schema {
-                tables_fields_names: tables_fields_names().to_owned(),
-                tables_fields_types: tables_fields_types().to_owned(),
-            };
 
-            let std_signatures = functions::fileql_std_signatures();
-            let std_functions = functions::fileql_std_functions();
-
-            let aggregation_signatures = aggregation_function_signatures();
-            let aggregation_functions = aggregation_functions();
-
-            let mut env = Environment::new(schema);
-            env.with_standard_functions(&std_signatures, std_functions);
-            env.with_aggregation_functions(&aggregation_signatures, aggregation_functions);
-
+            let mut env = create_fileql_environment();
             execute_fileql_query(query, &arguments, files, &mut env, &mut reporter);
         }
         Command::Help => {
@@ -84,20 +67,7 @@ fn launch_fileql_repl(arguments: Arguments) {
         return;
     }
 
-    let schema = Schema {
-        tables_fields_names: tables_fields_names().to_owned(),
-        tables_fields_types: tables_fields_types().to_owned(),
-    };
-
-    let std_signatures = functions::fileql_std_signatures();
-    let std_functions = functions::fileql_std_functions();
-
-    let aggregation_signatures = aggregation_function_signatures();
-    let aggregation_functions = aggregation_functions();
-
-    let mut global_env = Environment::new(schema);
-    global_env.with_standard_functions(&std_signatures, std_functions);
-    global_env.with_aggregation_functions(&aggregation_signatures, aggregation_functions);
+    let mut global_env = create_fileql_environment();
 
     let mut input = String::new();
 
