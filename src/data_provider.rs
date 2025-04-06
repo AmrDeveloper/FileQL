@@ -1,11 +1,11 @@
 use std::path::Path;
 
 use gitql_core::object::Row;
-use gitql_core::values::base::Value;
 use gitql_core::values::boolean::BoolValue;
 use gitql_core::values::integer::IntValue;
 use gitql_core::values::null::NullValue;
 use gitql_core::values::text::TextValue;
+use gitql_core::values::Value;
 use gitql_engine::data_provider::DataProvider;
 
 pub struct FileDataProvider {
@@ -43,7 +43,7 @@ fn select_files(
             if column_name == "path" {
                 let file_path_string = path.to_str().unwrap_or("");
                 let value = file_path_string.to_string();
-                values.push(Box::new(TextValue { value }));
+                values.push(Box::new(TextValue::new(value)));
                 continue;
             }
 
@@ -54,7 +54,7 @@ fn select_files(
                     ""
                 };
                 let value = parent_path.to_string();
-                values.push(Box::new(TextValue { value }));
+                values.push(Box::new(TextValue::new(value)));
                 continue;
             }
 
@@ -64,19 +64,19 @@ fn select_files(
                     .and_then(|ext| ext.to_str())
                     .unwrap_or("")
                     .to_string();
-                values.push(Box::new(TextValue { value }));
+                values.push(Box::new(TextValue::new(value)));
                 continue;
             }
 
             if column_name == "is_dir" {
                 let value = path.is_dir();
-                values.push(Box::new(BoolValue { value }));
+                values.push(Box::new(BoolValue::new(value)));
                 continue;
             }
 
             if column_name == "is_file" {
                 let value = path.is_file();
-                values.push(Box::new(BoolValue { value }));
+                values.push(Box::new(BoolValue::new(value)));
                 continue;
             }
 
